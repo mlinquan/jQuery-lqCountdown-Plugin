@@ -11,7 +11,7 @@
  * @license
  * Dual licensed under the MIT and GPL licenses.
  */
- if (!Date.format) {
+if (!Date.format) {
     Date.prototype.format = function(format) {
         var o = {
             "M+":this.getMonth() + (new Date("2015-01-01").getMonth() == 0 ? 1 :0),
@@ -93,88 +93,93 @@ if (!Array.remove) {
     };
 }
 
-$.lqCountdown = {
-    queue: {},
-    time_file: "",
-    time_diff: 0,
-    start_time: "",
-    timer: function(speed) {
-        var queue = $.lqCountdown.queue["s" + speed];
-        if(queue.elements.length == 0) {
-            clearInterval($.lqCountdown.queue["s" + speed].timer);
-            return;
-        }
-        for(var i=0;i<queue.elements.length;i++) {
-            var $that = $(queue.elements[i]);
-            var left_time = new Date($that.attr("data-endtime").replace(/\-/g, '/')).getTime() - new Date().getTime() - $.lqCountdown.time_diff;// + res_time;
-            var t = {};
-            if(left_time > 0) {
-                var d = parseInt(left_time / 1000 / 60 / 60 / 24, 10);//计算剩余的天数
-                var h = parseInt(left_time / 1000 / 60 / 60 % 24, 10);//计算剩余的小时数
-                var m = parseInt(left_time / 1000 / 60 % 60, 10);//计算剩余的分钟数
-                var s = parseInt(left_time / 1000 % 60, 10);//计算剩余的秒数
-                var ms = parseInt(left_time % 1000);//计算剩余的毫秒数
-                t.d = d;
-                t.h = h.cover(2);
-                t.m = m.cover(2);
-                t.s = s.cover(2);
-                t.ms = ms.cover(2);
-                if(queue.timerFun && $.isFunction(queue.timerFun)) {
-                    queue.timerFun($that, t, left_time);
-                }
-            } else {
-                if(queue.callbackFun && $.isFunction(queue.callbackFun)) {
-                    queue.callbackFun($that);
-                }
-                queue.elements.splice(i, 1);
+(function($){
+    $.lqCountdown = {
+        queue: {},
+        time_file: "",
+        time_diff: 0,
+        start_time: "",
+        timer: function(speed) {
+            "use asm";
+            var queue = $.lqCountdown.queue["s" + speed];
+            if(queue.elements.length == 0) {
+                return false;
             }
-        }
-    }
-};
-
-$.fn.do_lqCountdown = function(opt) {
-	if(!$.lqCountdown.queue["s"+opt.speed]) {
-	    $.lqCountdown.queue["s"+opt.speed] = {};
-        $.lqCountdown.queue["s"+opt.speed].elements = [];
-	    $.extend($.lqCountdown.queue["s"+opt.speed], opt);
-	}
-	this.each(function() {
-		$.lqCountdown.queue["s"+opt.speed].elements.push(this);
-	});
-	$.lqCountdown.queue["s"+opt.speed].timer = setInterval($.lqCountdown.timer(opt.speed), opt.speed);
-};
-
-$.fn.lqCountdown = function(options) {
-    var $that = this,
-    defaults = {
-        speed: 1000,
-        timerFun: function(obj, t) {
-            $(obj).html(t.h + ":" + t.m + ":" + t.s + " " + t.ms);
-        },
-        callbackFun: function(obj) {
-        }
-    },
-    opt = $.extend(defaults, options);
-    if($.lqCountdown.time_diff == 0 && $.lqCountdown.time_file) {
-        $.ajax({
-            url: $.lqCountdown.time_file,
-            type: "get",
-            global: false,
-            success:function(xml,status,xhr) {
-                var servertime = xhr.getResponseHeader("Date").toString();
-                var r_servertime = servertime.toDate();
-                var now = new Date().getTime();
-                var st = new Date(servertime).getTime();
-                $.lqCountdown.time_diff = (st - now);
-                $that.do_lqCountdown(opt);
-            },
-            beforeSend: function(xhr) {
-                $.lqCountdown.start_time = new Date().getTime();
-                //xhr.setRequestHeader("Range", "bytes=-1");
+            for(var i=0;i<queue.elements.length;i++) {
+                var $that = $(queue.elements[i]);
+                var left_time = new Date($that.attr("data-endtime").replace(/\-/g, '/')).getTime() - new Date().getTime() - $.lqCountdown.time_diff;// + res_time;
+                var t = {};
+                if(left_time > 0) {
+                    var d = parseInt(left_time / 1000 / 60 / 60 / 24, 10);//计算剩余的天数
+                    var h = parseInt(left_time / 1000 / 60 / 60 % 24, 10);//计算剩余的小时数
+                    var m = parseInt(left_time / 1000 / 60 % 60, 10);//计算剩余的分钟数
+                    var s = parseInt(left_time / 1000 % 60, 10);//计算剩余的秒数
+                    var ms = parseInt(left_time % 1000);//计算剩余的毫秒数
+                    t.d = d;
+                    t.h = h.cover(2);
+                    t.m = m.cover(2);
+                    t.s = s.cover(2);
+                    t.ms = ms.cover(2);
+                    if(queue.timerFun && $.isFunction(queue.timerFun)) {
+                        queue.timerFun($that, t, left_time);
+                    }
+                    clearTimeout($.lqCountdown.queue["s"+speed].timer);
+                    $.lqCountdown.queue["s"+speed].timer = setTimeout(function(){$.lqCountdown.timer(speed)}, speed);
+                } else {
+                    if(queue.callbackFun && $.isFunction(queue.callbackFun)) {
+                        queue.callbackFun($that);
+                    }
+                    queue.elements.splice(i, 1);
+                }
             }
+            return false;
+        }
+    };
+
+    $.fn.do_lqCountdown = function(opt) {
+        if(!$.lqCountdown.queue["s"+opt.speed]) {
+            $.lqCountdown.queue["s"+opt.speed] = {};
+            $.lqCountdown.queue["s"+opt.speed].elements = [];
+            $.extend($.lqCountdown.queue["s"+opt.speed], opt);
+        }
+        this.each(function() {
+            $.lqCountdown.queue["s"+opt.speed].elements.push(this);
         });
-    } else {
-        $that.do_lqCountdown(opt);
-    }
-    return this;
-};
+        $.lqCountdown.timer(opt.speed);
+    };
+
+    $.fn.lqCountdown = function(options) {
+        var $that = this,
+        defaults = {
+            speed: 1000,
+            timerFun: function(obj, t) {
+                $(obj).html(t.h + ":" + t.m + ":" + t.s + " " + t.ms);
+            },
+            callbackFun: function(obj) {
+            }
+        },
+        opt = $.extend(defaults, options);
+        if($.lqCountdown.time_diff == 0 && $.lqCountdown.time_file) {
+            $.ajax({
+                url: $.lqCountdown.time_file,
+                type: "get",
+                global: false,
+                success:function(xml,status,xhr) {
+                    var servertime = xhr.getResponseHeader("Date").toString();
+                    var r_servertime = servertime.toDate();
+                    var now = new Date().getTime();
+                    var st = new Date(servertime).getTime();
+                    $.lqCountdown.time_diff = (st - now);
+                    $that.do_lqCountdown(opt);
+                },
+                beforeSend: function(xhr) {
+                    $.lqCountdown.start_time = new Date().getTime();
+                    //xhr.setRequestHeader("Range", "bytes=-1");
+                }
+            });
+        } else {
+            $that.do_lqCountdown(opt);
+        }
+        return this;
+    };
+})(jQuery);
