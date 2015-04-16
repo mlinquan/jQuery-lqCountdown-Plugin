@@ -101,6 +101,7 @@ $.lqCountdown = {
     timer: function(speed) {
         var queue = $.lqCountdown.queue["s" + speed];
         if(queue.elements.length == 0) {
+            clearInterval($.lqCountdown.queue["s" + speed].timer);
             return;
         }
         for(var i=0;i<queue.elements.length;i++) {
@@ -121,9 +122,6 @@ $.lqCountdown = {
                 if(queue.timerFun && $.isFunction(queue.timerFun)) {
                     queue.timerFun($that, t, left_time);
                 }
-                setTimeout(function() {
-					$.lqCountdown.timer(speed);
-                }, speed);
             } else {
                 if(queue.callbackFun && $.isFunction(queue.callbackFun)) {
                     queue.callbackFun($that);
@@ -143,7 +141,7 @@ $.fn.do_lqCountdown = function(opt) {
 	this.each(function() {
 		$.lqCountdown.queue["s"+opt.speed].elements.push(this);
 	});
-	$.lqCountdown.timer(opt.speed);
+	$.lqCountdown.queue["s"+opt.speed].timer = setInterval($.lqCountdown.timer(opt.speed), opt.speed);
 };
 
 $.fn.lqCountdown = function(options) {
