@@ -100,10 +100,9 @@ if (!Array.remove) {
         time_diff: 0,
         start_time: "",
         timer: function(speed) {
-            "use asm";
             var queue = $.lqCountdown.queue["s" + speed];
             if(queue.elements.length == 0) {
-                return false;
+                return;
             }
             for(var i=0;i<queue.elements.length;i++) {
                 var $that = $(queue.elements[i]);
@@ -132,7 +131,6 @@ if (!Array.remove) {
                     queue.elements.splice(i, 1);
                 }
             }
-            return false;
         }
     };
 
