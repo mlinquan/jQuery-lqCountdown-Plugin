@@ -1,4 +1,4 @@
-localStorageJS
+jQuery-lqCountdown-Plugin
 ==============
 
-Local storage Javascript and CSS files.No 304 request.
+A jQuery countdown plugin.
