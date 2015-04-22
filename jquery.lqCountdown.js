@@ -3,7 +3,7 @@
  * https://github.com/mlinquan/jQuery-lqCountdown-Plugin
  *
  * @version
- * 0.0.2 (April 16, 2015)
+ * 0.0.3 (April 16, 2015)
  *
  * @copyright
  * Copyright (C) 2015 LinQuan.
@@ -18,7 +18,8 @@ if (!Number.prototype.cover || !String.prototype.cover) {
     };
 }
 
-(function($){
+(function($) {
+    "use strict";
     $.lqCountdown = {
         queue: {},
         time_file: "",
@@ -26,9 +27,12 @@ if (!Number.prototype.cover || !String.prototype.cover) {
         start_time: "",
         timer: function(speed) {
             var queue = $.lqCountdown.queue["s" + speed];
-            if(queue.elements.length == 0) {
+            if(queue.elements.length === 0) {
                 return;
             }
+            var timeoutFun = function() {
+                $.lqCountdown.timer(speed);
+            };
             for(var i=0;i<queue.elements.length;i++) {
                 var $that = $(queue.elements[i]);
                 var left_time = new Date($that.attr("data-endtime").replace(/\-/g, '/')).getTime() - new Date().getTime() - $.lqCountdown.time_diff;// + res_time;
@@ -48,7 +52,7 @@ if (!Number.prototype.cover || !String.prototype.cover) {
                         queue.timerFun($that, t, left_time);
                     }
                     clearTimeout($.lqCountdown.queue["s"+speed].timer);
-                    $.lqCountdown.queue["s"+speed].timer = setTimeout(function(){$.lqCountdown.timer(speed)}, speed);
+                    $.lqCountdown.queue["s"+speed].timer = setTimeout(timeoutFun, speed);
                 } else {
                     if(queue.callbackFun && $.isFunction(queue.callbackFun)) {
                         queue.callbackFun($that);
@@ -82,7 +86,7 @@ if (!Number.prototype.cover || !String.prototype.cover) {
             }
         },
         opt = $.extend(defaults, options);
-        if($.lqCountdown.time_diff == 0 && $.lqCountdown.time_file) {
+        if($.lqCountdown.time_diff === 0 && $.lqCountdown.time_file) {
             $.ajax({
                 url: $.lqCountdown.time_file,
                 type: "get",
