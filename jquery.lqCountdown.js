@@ -3,7 +3,7 @@
  * https://github.com/mlinquan/jQuery-lqCountdown-Plugin
  *
  * @version
- * 0.0.3 (April 16, 2015)
+ * 0.0.4 (April 16, 2015)
  *
  * @copyright
  * Copyright (C) 2015 LinQuan.
@@ -22,7 +22,7 @@ if (!Number.prototype.cover || !String.prototype.cover) {
     "use strict";
     $.lqCountdown = {
         queue: {},
-        time_file: "",
+        time_file: false,
         time_diff: 0,
         start_time: "",
         timer: function(speed) {
@@ -86,23 +86,22 @@ if (!Number.prototype.cover || !String.prototype.cover) {
             }
         },
         opt = $.extend(defaults, options);
-        if($.lqCountdown.time_diff === 0 && $.lqCountdown.time_file) {
+        if($.lqCountdown.time_diff === 0 && $.lqCountdown.time_file !== false) {
             $.ajax({
                 url: $.lqCountdown.time_file,
-                type: "get",
+                type:'HEAD',
                 global: false,
-                success:function(xml,status,xhr) {
-                    var servertime = xhr.getResponseHeader("Date").toString();
-                    //var r_servertime = servertime.toDate();
-                    var now = new Date().getTime();
-                    var st = new Date(servertime).getTime();
-                    $.lqCountdown.time_diff = Math.ceil((st - now) / 1000)*1000;
-                    $that.do_lqCountdown(opt);
-                },
                 beforeSend: function(xhr) {
                     $.lqCountdown.start_time = new Date().getTime();
                     //xhr.setRequestHeader("Range", "bytes=-1");
                 }
+            }).always(function(text, status, xhr) {
+                var servertime = xhr.getResponseHeader("Date").toString();
+                //var r_servertime = servertime.toDate();
+                var now = new Date().getTime();
+                var st = new Date(servertime).getTime();
+                $.lqCountdown.time_diff = Math.ceil((st - now) / 1000)*1000;
+                $that.do_lqCountdown(opt);
             });
         } else {
             $that.do_lqCountdown(opt);
