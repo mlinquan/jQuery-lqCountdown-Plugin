@@ -3,7 +3,7 @@
  * https://github.com/mlinquan/jQuery-lqCountdown-Plugin
  *
  * @version
- * 0.0.4 (April 16, 2015)
+ * 0.0.5 (April 16, 2015)
  *
  * @copyright
  * Copyright (C) 2015 LinQuan.
@@ -27,6 +27,9 @@ if (!Number.prototype.cover || !String.prototype.cover) {
         start_time: "",
         timer: function(speed) {
             var queue = $.lqCountdown.queue["s" + speed];
+            queue.elements = $.grep(queue.elements, function () {
+                return this !== null;
+            });
             if(queue.elements.length === 0) {
                 return;
             }
@@ -34,6 +37,9 @@ if (!Number.prototype.cover || !String.prototype.cover) {
                 $.lqCountdown.timer(speed);
             };
             for(var i=0;i<queue.elements.length;i++) {
+                if(!queue.elements[i]) {
+                    continue;
+                }
                 var $that = $(queue.elements[i]);
                 var left_time = new Date($that.attr("data-endtime").replace(/\-/g, '/')).getTime() - new Date().getTime() - $.lqCountdown.time_diff;// + res_time;
                 var t = {};
@@ -57,7 +63,7 @@ if (!Number.prototype.cover || !String.prototype.cover) {
                     if(queue.callbackFun && $.isFunction(queue.callbackFun)) {
                         queue.callbackFun($that);
                     }
-                    queue.elements.splice(i, 1);
+                    queue.elements[i] = null;
                 }
             }
         }
