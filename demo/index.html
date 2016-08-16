@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" dir="ltr">
+<head>
+<meta charset="utf-8">
+<title>jQuery-lqCountdown-Plugin</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="renderer" content="webkit">
+<script src="jquery-1.12.4.js"></script>
+<script src="../jquery.lqCountdown.js"></script>
+</head>
+<body>
+2016-12-31 00:00:00 <span class="countdown" data-endtime="2016-12-31 00:00:00"></span><br>
+2016-12-31 00:00:00 <span class="countdown2" data-endtime="2016-12-31 00:00:00"></span><br>
+2016-12-31 00:00:00 <span class="countdown3" data-endtime="2016-12-31 00:00:00"></span>
+<script type="text/javascript">
+$('.countdown').lqCountdown({
+    speed: 1000,
+    timerFun: function(obj, t, left_time) {
+        obj.html(JSON.stringify(t) + '' + left_time);
+    },
+    callbackFun: function(obj) {
+        obj.html('Done');
+    }
+});
+$('.countdown2').lqCountdown({
+    speed: 100,
+    timerFun: function(obj, t, left_time) {
+        obj.html(JSON.stringify(t) + '' + left_time);
+    },
+    callbackFun: function(obj) {
+        obj.html('Done');
+    }
+});
+$('.countdown3').lqCountdown({
+    speed: 1,
+    timerFun: function(obj, t, left_time) {
+        obj.html(JSON.stringify(t) + '' + left_time);
+    },
+    callbackFun: function(obj) {
+        obj.html('Done');
+    }
+});
+</script>
+</body>
+</html>
