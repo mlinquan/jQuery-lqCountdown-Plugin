@@ -11,6 +11,7 @@
  * @license
  * Dual licensed under the MIT and GPL licenses.
  */
+"use strict";
 if (!Number.prototype.cover || !String.prototype.cover) {
     Number.prototype.cover = String.prototype.cover = function(n) {
         var nl = ("" + this).length;
@@ -18,8 +19,13 @@ if (!Number.prototype.cover || !String.prototype.cover) {
     };
 }
 
-(function($) {
-    "use strict";
+(function( factory ) {
+    if ( typeof define === "function" && define.amd ) {
+        define( ["jquery"], factory );
+    } else {
+        factory( jQuery );
+    }
+} (function($) {
     $.lqCountdown = {
         queue: {},
         time_file: false,
@@ -115,4 +121,4 @@ if (!Number.prototype.cover || !String.prototype.cover) {
         }
         return this;
     };
-})(jQuery);
+}));
