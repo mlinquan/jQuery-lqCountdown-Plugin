@@ -34,7 +34,7 @@ if (!Number.prototype.cover || !String.prototype.cover) {
         timer: function(speed) {
             var queue = $.lqCountdown.queue["s" + speed];
             queue.elements = $.grep(queue.elements, function (ele) {
-                return $(document).find(ele).length;
+                return $(document).find(ele.obj).length;
             });
             if(queue.elements.length === 0) {
                 return;
@@ -46,8 +46,8 @@ if (!Number.prototype.cover || !String.prototype.cover) {
                 if(!queue.elements[i]) {
                     continue;
                 }
-                var $that = $(queue.elements[i]);
-                var left_time = new Date($that.attr("data-endtime").replace(/\-/g, '/')).getTime() - new Date().getTime() - $.lqCountdown.time_diff;// + res_time;
+                var $that = $(queue.elements[i].obj);
+                var left_time = new Date(queue.elements[i].endtime.replace(/\-/g, '/')).getTime() - new Date().getTime() - $.lqCountdown.time_diff;// + res_time;
                 var t = {};
                 if(left_time > 0) {
                     var d = parseInt(left_time / 1000 / 60 / 60 / 24, 10);//计算剩余的天数
@@ -82,7 +82,10 @@ if (!Number.prototype.cover || !String.prototype.cover) {
             $.extend($.lqCountdown.queue["s"+opt.speed], opt);
         }
         this.each(function() {
-            $.lqCountdown.queue["s"+opt.speed].elements.push(this);
+            var data = {};
+            data.obj = this;
+            data.endtime = $(this).attr('data-endtime') || opt.endtime;
+            $.lqCountdown.queue["s"+opt.speed].elements.push(data);
         });
         $.lqCountdown.timer(opt.speed);
     };
