@@ -3,10 +3,10 @@
  * https://github.com/mlinquan/jQuery-lqCountdown-Plugin
  *
  * @version
- * 0.0.6 (April 16, 2015)
+ * 1.0.0
  *
- * @copyright
- * Copyright (C) 2015 LinQuan.
+ * @copycat
+ * LinQuan(http://linquan.name)
  *
  * @license
  * Dual licensed under the MIT and GPL licenses.
@@ -33,8 +33,8 @@ if (!Number.prototype.cover || !String.prototype.cover) {
         start_time: "",
         timer: function(speed) {
             var queue = $.lqCountdown.queue["s" + speed];
-            queue.elements = $.grep(queue.elements, function () {
-                return this !== null;
+            queue.elements = $.grep(queue.elements, function (ele) {
+                return $(document).find(ele).length;
             });
             if(queue.elements.length === 0) {
                 return;
