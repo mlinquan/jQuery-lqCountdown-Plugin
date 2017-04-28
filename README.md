@@ -1,8 +1,8 @@
-#jQuery-lqCountdown-Plugin
+# jQuery-lqCountdown-Plugin
 
 A jQuery countdown plugin.
 
-##Usage
+## Usage
 ```html
 2016-12-31 00:00:00 <span class="countdown" data-endtime="2016-12-31 00:00:00"></span><br>
 <span class="countdown2"></span><br>
